@@ -15,16 +15,18 @@ const AddUserPage = () => {
       password: passwordRef.current.value,
     };
 
-    const goal_url = "";
+    const goal_url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/add-user`;
     axios
       .post(goal_url, formData)
       .then((d) => {
-        console.log(d.data);
-        toast.success("successful");
+        toast.success(d.data.message);
       })
       .catch((err) => {
+        const message = err.response
+          ? err.response.data.message
+          : "some errors occured!";
         console.log(err);
-        toast.error("error");
+        toast.error(message);
       });
   };
 
