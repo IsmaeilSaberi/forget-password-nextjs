@@ -25,7 +25,6 @@ const AddUserPage = () => {
         const message = err.response
           ? err.response.data.message
           : "some errors occured!";
-        console.log(err);
         toast.error(message);
       });
   };

@@ -80,11 +80,11 @@ const reset_password = async (req, res) => {
           .then((d) =>
             res
               .status(200)
-              .json({ msg: "You have 2 min for checking your email..." })
+              .json({ message: "You have 2 min for checking your email..." })
           )
           .catch((err) => {
             console.log(err);
-            res.status(400).json({ msg: "Error in sending email..." });
+            res.status(400).json({ message: "Error in sending email..." });
           });
       }
     }

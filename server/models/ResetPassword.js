@@ -10,8 +10,8 @@ const ResetPasswordSchema = new mongoose.Schema({
     type: String,
   },
   expire_time: {
-    required: true,
-    type: String,
+    type: Date,
+    default: Date.now,
     expires: 118,
   },
 });

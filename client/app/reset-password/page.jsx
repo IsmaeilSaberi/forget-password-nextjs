@@ -18,12 +18,11 @@ const ResetPasswordPage = () => {
     axios
       .post(goal_url, formData)
       .then((d) => {
-        console.log(d.data);
-        toast.success(d.data.msg);
+        toast.success(d.data.message);
       })
       .catch((err) => {
         const message = err.response
-          ? err.response.data.msg
+          ? err.response.data.message
           : "some errors occured!";
         toast.error(message);
       });
