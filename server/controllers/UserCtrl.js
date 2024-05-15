@@ -94,3 +94,52 @@ const reset_password = async (req, res) => {
   }
 };
 module.exports.reset_password = reset_password;
+
+const new_password = async (req, res) => {
+  try {
+    if (!req.body.password || !req.body.repassword || !req.body.token) {
+      res.status(400).json({
+        message: "Please enter password, repassword and token completely ...",
+      });
+    } else {
+      if (req.body.password != req.body.repassword) {
+        res.status(400).json({ message: "Confirm password is wrong ..." });
+      } else {
+        const goal_token = req.body.token;
+        const found_reset_password = await ResetPassword.findOne({
+          token: goal_token,
+        });
+        if (!found_reset_password) {
+          res.status(400).json({ message: "Your token is expired!" });
+        } else {
+          // FIND USER
+          const goal_email = found_reset_password.email;
+          const found_user = await User.findOne({ email: goal_email });
+
+          if (!found_user) {
+            res.status(400).json({ message: "User not found!" });
+          } else {
+            // CHANGE PASSWORD
+            const hashed_new_password = await bcrypt.hash(
+              req.body.password,
+              10
+            );
+            const user_new_data = {
+              password: hashed_new_password,
+            };
+            await User.findByIdAndUpdate(found_user._id, user_new_data, {
+              new: true,
+            });
+            res
+              .status(200)
+              .json({ message: "Your password changed successfully!" });
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ message: "An error accured!" });
+  }
+};
+module.exports.new_password = new_password;
