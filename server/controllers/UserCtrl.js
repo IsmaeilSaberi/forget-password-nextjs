@@ -50,9 +50,42 @@ const reset_password = async (req, res) => {
           email: goal_email,
           token: reset_password_token,
         };
-        await ResetPassword(reset_password_data);
+        await ResetPassword.create(reset_password_data);
 
         //EMAIL TO USER
+        const goal_link = `http://localhost:3000/new-password/${reset_password_token}`;
+
+        const MAIL_HOST = process.env.MAIL_HOST;
+        const MAIL_PORT = process.env.MAIL_PORT;
+        const MAIL_USER = process.env.MAIL_USER;
+        const MAIL_PASSWORD = process.env.MAIL_PASSWORD;
+        const MAIL_MAIN_ADDRESS = process.env.MAIL_MAIN_ADDRESS;
+
+        const transporter = nodemailer.createTransport({
+          host: MAIL_HOST,
+          port: MAIL_PORT,
+          tls: true,
+          auth: {
+            user: MAIL_USER,
+            pass: MAIL_PASSWORD,
+          },
+        });
+        transporter
+          .sendMail({
+            from: MAIL_MAIN_ADDRESS,
+            to: goal_email,
+            subject: "reset password",
+            html: `<html><head><style>strong{color: rgb(0, 119, 255);}h1{font-size: large;}</style></head><body><h1>Reset Password Email from Reset PASSWORD project</h1><br /> <a target="_blank" href=${goal_link} style="margin-bottom: 40px;"> <span style=" background-color:#fff700; padding: .5rem; text-align: center;border-radius: .4rem; line-height: 2rem; font-family:tahoma,arial,helvetica,sans-serif"> ${goal_link} </span> </a> <br /><div></div></body></html>`,
+          })
+          .then((d) =>
+            res
+              .status(200)
+              .json({ msg: "You have 2 min for checking your email..." })
+          )
+          .catch((err) => {
+            console.log(err);
+            res.status(400).json({ msg: "Error in sending email..." });
+          });
       }
     }
   } catch (error) {

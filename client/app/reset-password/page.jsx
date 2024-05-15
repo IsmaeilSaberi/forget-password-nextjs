@@ -13,16 +13,19 @@ const ResetPasswordPage = () => {
       email: emailRef.current.value,
     };
 
-    const goal_url = "";
+    const goal_url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/reset-password`;
+
     axios
       .post(goal_url, formData)
       .then((d) => {
         console.log(d.data);
-        toast.success("successful");
+        toast.success(d.data.msg);
       })
       .catch((err) => {
-        console.log(err);
-        toast.error("error");
+        const message = err.response
+          ? err.response.data.msg
+          : "some errors occured!";
+        toast.error(message);
       });
   };
 
